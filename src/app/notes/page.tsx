@@ -6,7 +6,7 @@ export default function NotesPage() {
     <div>
       <Button>Click Me</Button>
       <div>This is notes page</div>
-      <UserButton afterSwitchSessionUrl="/" />
+      <UserButton afterSignOutUrl="/" />
     </div>
   );
 }
