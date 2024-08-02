@@ -13,8 +13,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Notes {
-  id        String  @id @default(cuid()) @map("_id") @db.ObjectId
+model Note {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   content   String?
   userId    String
