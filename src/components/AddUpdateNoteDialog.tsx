@@ -22,18 +22,26 @@ import { Textarea } from "./ui/textarea";
 import LoadingButton from "./LoadingButton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Note } from "@prisma/client";
 
 interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
+  noteToUpdate?: Note;
+  submitText?: string;
 }
 
-const AddNoteDialog = ({ open, setOpen }: Props) => {
+const AddUpdateNoteDialog = ({
+  open,
+  setOpen,
+  noteToUpdate,
+  submitText,
+}: Props) => {
   const form = useForm<CreateNoteSchema>({
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
-      title: "",
-      content: "",
+      title: noteToUpdate?.title || "",
+      content: noteToUpdate?.content || "",
     },
   });
 
@@ -41,13 +49,23 @@ const AddNoteDialog = ({ open, setOpen }: Props) => {
 
   const onSubmit = async (data: CreateNoteSchema) => {
     try {
-      const response = await fetch("/api/note", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add note.");
+      if (noteToUpdate) {
+        const noteToUpdated = { ...data, id: noteToUpdate.id };
+        const response = await fetch(`/api/note`, {
+          method: "PUT",
+          body: JSON.stringify(noteToUpdated),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to update note.");
+        }
+      } else {
+        const response = await fetch("/api/note", {
+          method: "POST",
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add note.");
+        }
       }
 
       form.reset();
@@ -100,10 +118,13 @@ const AddNoteDialog = ({ open, setOpen }: Props) => {
 
             <DialogFooter>
               {form.formState.isSubmitting ? (
-                <LoadingButton text="Adding Note" disabled={true} />
+                <LoadingButton
+                  text={submitText ? "Updating Note" : "Adding Note"}
+                  disabled={true}
+                />
               ) : (
                 <Button type="submit" className="w-full">
-                  Add Note
+                  {submitText || "Add Note"}
                 </Button>
               )}
             </DialogFooter>
@@ -114,4 +135,4 @@ const AddNoteDialog = ({ open, setOpen }: Props) => {
   );
 };
 
-export default AddNoteDialog;
+export default AddUpdateNoteDialog;

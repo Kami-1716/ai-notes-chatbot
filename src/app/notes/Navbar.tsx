@@ -1,10 +1,10 @@
 "use client";
 
-import AddNoteDialog from "@/components/AddNoteDialog";
+import AddUpdateNoteDialog from "@/components/AddUpdateNoteDialog";
 import { ModeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
-import { PlusCircle } from "lucide-react";
+import { UserButton, ClerkLoading, ClerkLoaded } from "@clerk/nextjs";
+import { Loader2, PlusCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -23,18 +23,23 @@ const Navbar = () => {
               </Link>
             </div>
 
-            <div className="flex items-center gap-4">
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: {
-                      width: "2.5rem",
-                      height: "2.5rem",
+            <div className="flex items-center justify-center gap-4">
+              <ClerkLoaded>
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: {
+                        width: "2.5rem",
+                        height: "2.5rem",
+                      },
                     },
-                  },
-                }}
-              />
+                  }}
+                />
+              </ClerkLoaded>
+              <ClerkLoading>
+                <Loader2 className="h4 w-4 animate-spin text-muted-foreground" />
+              </ClerkLoading>
               <Button onClick={() => setDialogOpen(true)}>
                 <PlusCircle size={20} className="mr-2" />
                 Add Note
@@ -44,7 +49,7 @@ const Navbar = () => {
           </div>
         </div>
       </header>
-      <AddNoteDialog open={dialogOpen} setOpen={setDialogOpen} />
+      <AddUpdateNoteDialog open={dialogOpen} setOpen={setDialogOpen} />
     </>
   );
 };
