@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({
         <body className={poppins.className}>
           <ThemeProvider attribute="class" defaultTheme="system">
             {children}
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

@@ -2,9 +2,10 @@ import prisma from "@/lib/db/prisma";
 import { createNoteSchema } from "@/lib/validation/note";
 import { auth } from "@clerk/nextjs/server";
 
-const POST = async (req: Request) => {
+export const POST = async (req: Request) => {
   try {
     const body = await req.json();
+    console.log(body);
     const parseNote = createNoteSchema.safeParse(body);
     if (!parseNote.success) {
       console.error(parseNote.error);
