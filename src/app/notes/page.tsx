@@ -1,6 +1,6 @@
+import NoteLayout from "@/components/NoteLayout";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/db/prisma";
-import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function NotesPage() {
@@ -15,5 +15,16 @@ export default async function NotesPage() {
     },
   });
 
-  return <div>{JSON.stringify(notes)}</div>;
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {notes.map((note) => (
+        <NoteLayout key={note.id} note={note} />
+      ))}
+      {notes.length === 0 && (
+        <div className="text-center">
+          {"Create a new note by clicking the button 'Add Note'"}
+        </div>
+      )}
+    </div>
+  );
 }
