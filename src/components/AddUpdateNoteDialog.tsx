@@ -23,12 +23,15 @@ import LoadingButton from "./LoadingButton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Note } from "@prisma/client";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   noteToUpdate?: Note;
   submitText?: string;
+  headerTitle?: string;
 }
 
 const AddUpdateNoteDialog = ({
@@ -36,6 +39,7 @@ const AddUpdateNoteDialog = ({
   setOpen,
   noteToUpdate,
   submitText,
+  headerTitle,
 }: Props) => {
   const form = useForm<CreateNoteSchema>({
     resolver: zodResolver(createNoteSchema),
@@ -45,6 +49,7 @@ const AddUpdateNoteDialog = ({
     },
   });
 
+  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (data: CreateNoteSchema) => {
@@ -77,11 +82,36 @@ const AddUpdateNoteDialog = ({
     }
   };
 
+  const handleDelete = async () => {
+    if (!noteToUpdate) {
+      toast.error("Note not found.");
+    }
+
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/note`, {
+        method: "DELETE",
+        body: JSON.stringify({ id: noteToUpdate?.id }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete note.");
+      }
+
+      router.refresh();
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete note. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Note</DialogTitle>
+          <DialogTitle>{headerTitle || "Add New Note"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -116,7 +146,25 @@ const AddUpdateNoteDialog = ({
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="gap-1">
+              {noteToUpdate && (
+                <Button
+                  type="button"
+                  variant={"destructive"}
+                  className="w-full"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin text-white" />{" "}
+                      Deleting Note
+                    </>
+                  ) : (
+                    "Delete Note"
+                  )}
+                </Button>
+              )}
               {form.formState.isSubmitting ? (
                 <LoadingButton
                   text={submitText ? "Updating Note" : "Adding Note"}

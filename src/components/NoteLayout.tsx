@@ -49,6 +49,7 @@ const NoteLayout = ({ note }: Props) => {
         open={showEditDialog}
         setOpen={setShowEditDialog}
         submitText="Update Note"
+        headerTitle="Update Note"
       />
     </>
   );

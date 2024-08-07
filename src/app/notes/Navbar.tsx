@@ -5,12 +5,15 @@ import { ModeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { UserButton, ClerkLoading, ClerkLoaded } from "@clerk/nextjs";
 import { Loader2, PlusCircle } from "lucide-react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import { dark } from "@clerk/themes";
 
 const Navbar = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { theme } = useTheme();
   return (
     <>
       <header className="bg-white shadow-sm">
@@ -28,6 +31,7 @@ const Navbar = () => {
                 <UserButton
                   afterSignOutUrl="/"
                   appearance={{
+                    baseTheme: (theme === "dark" ? dark : "light") as any,
                     elements: {
                       avatarBox: {
                         width: "2.5rem",

@@ -21,7 +21,7 @@ export default async function NotesPage() {
         <NoteLayout key={note.id} note={note} />
       ))}
       {notes.length === 0 && (
-        <div className="text-center">
+        <div className="text-center col-span-full">
           {"Create a new note by clicking the button 'Add Note'"}
         </div>
       )}
