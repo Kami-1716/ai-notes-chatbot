@@ -1,4 +1,6 @@
+import { noteIndex } from "@/lib/db/pinecone";
 import prisma from "@/lib/db/prisma";
+import { getEmbeddings } from "@/lib/openai";
 import {
   createNoteSchema,
   deleteNoteSchema,
@@ -9,7 +11,6 @@ import { auth } from "@clerk/nextjs/server";
 export const POST = async (req: Request) => {
   try {
     const body = await req.json();
-    console.log(body);
     const parseNote = createNoteSchema.safeParse(body);
     if (!parseNote.success) {
       console.error(parseNote.error);
@@ -24,12 +25,25 @@ export const POST = async (req: Request) => {
       return Response.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const note = await prisma.note.create({
-      data: {
-        title,
-        content,
-        userId,
-      },
+    const embeddings = await getEmbeddingsForNote(title, content);
+    const note = await prisma.$transaction(async (tx) => {
+      const note = await tx.note.create({
+        data: {
+          title,
+          content,
+          userId,
+        },
+      });
+
+      await noteIndex.upsert([
+        {
+          id: note.id,
+          values: embeddings.values,
+          metadata: { userId },
+        },
+      ]);
+
+      return note;
     });
 
     return Response.json(note, { status: 201 });
@@ -115,4 +129,13 @@ export const DELETE = async (req: Request) => {
     console.error(error);
     return Response.json({ message: "Internal server error" }, { status: 500 });
   }
+};
+
+const getEmbeddingsForNote = async (
+  title: string,
+  content: string | undefined
+) => {
+  const embeddings = await getEmbeddings(`${title} \n\n ${content || ""}`);
+
+  return embeddings;
 };
