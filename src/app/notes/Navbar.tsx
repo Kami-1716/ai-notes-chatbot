@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { dark } from "@clerk/themes";
+import AiChatButton from "@/components/AiChatButton";
 
 const Navbar = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,6 +50,7 @@ const Navbar = () => {
                 Add Note
               </Button>
               <ModeToggle />
+              <AiChatButton />
             </div>
           </div>
         </div>
