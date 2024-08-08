@@ -3,7 +3,8 @@ import prisma from "@/lib/db/prisma";
 import { getEmbeddings } from "@/lib/openai";
 import { createGoogleGenerativeAI, google } from "@ai-sdk/google";
 import { auth } from "@clerk/nextjs/server";
-import { streamText } from "ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { generateText, OpenAIStream, streamText } from "ai";
 
 export const maxDuration = 30;
 
@@ -11,13 +12,13 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
+    console.log(messages);
+
     const messagesTruncated = messages.slice(-6);
 
     const embeddings = await getEmbeddings(
       messagesTruncated.map((message: any) => message.content).join("\n")
     );
-
-    console.log(embeddings);
     const { userId } = auth();
 
     const vectorQueryResponse = await noteIndex.query({
@@ -36,8 +37,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log("Relavent Notes found", releventNote);
-
     const systemMessages = {
       role: "system",
       content:
@@ -54,14 +53,35 @@ export async function POST(req: Request) {
       apiKey: process.env.OPENAI_API_KEY!,
     });
 
-    const result = await streamText({
-      model: google("models/gemini-pro"),
-      messages: conversationHistory,
+    const model = google("models/gemini-1.5-pro-latest", {
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          threshold: "BLOCK_LOW_AND_ABOVE",
+        },
+      ],
     });
 
-    console.log(result.toDataStreamResponse());
+    console.log(systemMessages.content);
 
-    return result.toDataStreamResponse();
+    const { text } = await generateText({
+      model,
+      prompt: systemMessages.content,
+    });
+
+    console.log(text);
+
+    return new Response(
+      JSON.stringify({
+        messages: [
+          ...conversationHistory,
+          {
+            role: "system",
+            content: text,
+          },
+        ],
+      })
+    );
   } catch (error) {
     console.error(error);
     return new Response("Failed to generate text", { status: 500 });
