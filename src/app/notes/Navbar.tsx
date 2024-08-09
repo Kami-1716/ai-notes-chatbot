@@ -28,6 +28,12 @@ const Navbar = () => {
             </div>
 
             <div className="flex items-center justify-center gap-4">
+              <Button onClick={() => setDialogOpen(true)}>
+                <PlusCircle size={20} className="mr-2" />
+                Add Note
+              </Button>
+              <AiChatButton />
+              <ModeToggle />
               <ClerkLoaded>
                 <UserButton
                   afterSignOutUrl="/"
@@ -45,12 +51,6 @@ const Navbar = () => {
               <ClerkLoading>
                 <Loader2 className="h4 w-4 animate-spin text-muted-foreground" />
               </ClerkLoading>
-              <Button onClick={() => setDialogOpen(true)}>
-                <PlusCircle size={20} className="mr-2" />
-                Add Note
-              </Button>
-              <ModeToggle />
-              <AiChatButton />
             </div>
           </div>
         </div>

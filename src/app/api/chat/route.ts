@@ -12,7 +12,9 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    console.log(messages);
+    const latestMessageContent = messages[messages.length - 1].content;
+
+    console.log(latestMessageContent);
 
     const messagesTruncated = messages.slice(-6);
 
@@ -40,11 +42,16 @@ export async function POST(req: Request) {
     const systemMessages = {
       role: "system",
       content:
-        "You are an intelligent note taking app. You answer user's question based on their existing notes. " +
-        "The relavent notes for this query are:\n" +
+        "You are an advanced note-taking assistant. Your goal is to provide insightful answers based on the user's existing notes. " +
+        "Below are the most relevant notes for the current query, followed by the user's latest message:\n\n" +
         releventNote
-          .map((note) => `Title: ${note.title}\n\nContent: ${note.content}`)
-          .join("\n\n"),
+          .map(
+            (note) => `**Title:** ${note.title}\n**Content:** ${note.content}`
+          )
+          .join("\n\n") +
+        "\n\n**User's Latest Message:**\n" +
+        latestMessageContent +
+        "\n\nBased on this information, generate the most accurate response.",
     };
 
     const conversationHistory = [systemMessages, ...messagesTruncated];
@@ -64,24 +71,17 @@ export async function POST(req: Request) {
 
     console.log(systemMessages.content);
 
-    const { text } = await generateText({
+    // const { text } = await generateText({
+    //   model,
+    //   prompt: systemMessages.content,
+    // });
+
+    const textStream = await streamText({
       model,
       prompt: systemMessages.content,
     });
 
-    console.log(text);
-
-    return new Response(
-      JSON.stringify({
-        messages: [
-          ...conversationHistory,
-          {
-            role: "system",
-            content: text,
-          },
-        ],
-      })
-    );
+    return textStream.toDataStreamResponse();
   } catch (error) {
     console.error(error);
     return new Response("Failed to generate text", { status: 500 });
