@@ -36,7 +36,7 @@ const Navbar = () => {
               <ModeToggle />
               <ClerkLoaded>
                 <UserButton
-                  afterSignOutUrl="/"
+                  afterSwitchSessionUrl="/" // Redirect to home page after logout
                   appearance={{
                     baseTheme: (theme === "dark" ? dark : "light") as any,
                     elements: {
