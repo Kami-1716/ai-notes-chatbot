@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI-Powered Notes Application
 
-## Getting Started
+## Overview
 
-First, run the development server:
+This project is a **Notes Application** powered by an AI chatbot that provides contextual answers based on the content of the notes. The application was developed as a learning project.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **AI-Powered Chatbot**: The application includes a chatbot that answers questions based on the notes content.
+- **Contextual Understanding**: The chatbot provides responses relevant to the specific context of the notes.
+- **User-Friendly Interface**: The notes can be easily created, edited, and managed within the application.
+- **Real-Time Interaction**: The chatbot interacts with the user in real-time, providing instant responses.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technologies Used
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Frontend & Backend**: [Next.js](https://nextjs.org/)
+- **AI/ML**: [Gemini API](https://ai.google.dev) with [Vercel AI SDK](https://sdk.vercel.ai/)
+- **Deployment**: [Vercel](https://vercel.com/)
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **Create a Note**: Add new notes by clicking on the "New Note" button.
+2. **Ask a Question**: Use the chatbot to ask questions related to your notes.
+3. **Edit a Note**: Modify the existing notes as needed.
+4. **Delete a Note**: Remove any note by clicking the "Delete" button.
